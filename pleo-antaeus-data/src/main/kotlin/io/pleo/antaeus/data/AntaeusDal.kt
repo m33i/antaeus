@@ -39,7 +39,7 @@ class AntaeusDal(private val db: Database) {
     fun fetchUnpaidInvoices(): List<Invoice> {
         return transaction(db) {
             InvoiceTable
-                .select { InvoiceTable.status.eq("PENDING") }
+                .select { InvoiceTable.status.eq(InvoiceStatus.PENDING.toString()) }
                 .map { it.toInvoice() }
         }
     }
@@ -92,7 +92,7 @@ class AntaeusDal(private val db: Database) {
         return transaction(db) {
             InvoiceTable
                 .update({ InvoiceTable.id.eq(id) }) {
-                    it[status] = "PAID"
+                    it[status] = InvoiceStatus.PAID.toString()
                 }
         }
     }

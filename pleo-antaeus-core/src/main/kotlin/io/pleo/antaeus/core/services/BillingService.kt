@@ -1,6 +1,8 @@
 package io.pleo.antaeus.core.services
 
 import io.pleo.antaeus.core.external.PaymentProvider
+import io.pleo.antaeus.models.Invoice
+import io.pleo.antaeus.models.InvoiceStatus
 
 class BillingService(
     private val paymentProvider: PaymentProvider,
@@ -8,20 +10,25 @@ class BillingService(
 ) {
     // TODO - Add code e.g. here
 
-    // fetch unpaid invoices
-    // foreach invoice i => i.contains(status == 'PENDING') (invoiceService?)
-    // PaymentProvider has charge bool
-    // charge customer
-    // create scheduler to execute the monthlyBilling each 1st
-
+    // Billing all unpaid invoices
     fun monthlyBilling() {
-        val unpaids = invoiceService.fetchUnpaid()
+        val unpaid = invoiceService.fetchUnpaid()
 
-        unpaids.forEach {
+        unpaid.forEach {
             if (paymentProvider.charge(it)) {
                 invoiceService.setAsPaid(it.id)
             }
         }
+    }
+
+    // Billing only one specific invoice
+    fun simpleBilling(id: Int): Invoice {
+
+        if (invoiceService.fetch(id).status == InvoiceStatus.PENDING) {
+            invoiceService.setAsPaid(id)
+        }
+
+        return invoiceService.fetch(id)
     }
 
 

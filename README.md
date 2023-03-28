@@ -96,3 +96,34 @@ The code given is structured as follows. Feel free however to modify the structu
 * [Sqlite3](https://sqlite.org/index.html) - Database storage engine
 
 Happy hacking 😁!
+
+## Challenge Documentation (WIP)
+
+### Modified files / Additions:
+
+> InvoiceService
+
+- Added fetch's that will be used to get unpaidInvoices and set them as paid (AntaeusDal)
+
+> AntaeusDal
+
+- setInvoiceAsPaid() updates table invoices as paid 
+- fetchUnpaidInvoices() select all unpaid invoices from db 
+
+> BillingService
+
+- monthlyBilling() function which iterates over unpaid invoices and charge them
+- simpleBilling() function used if required to charge only one specific invoice from a customer
+
+
+### Commentary / Thoughts:
+
+.
+
+### TODO:
+
+- Recurring task (scheduler)
+- REST modification to test billing 1 invoice
+- Exception handling
+- Find library for scheduler?
+- write thought process
