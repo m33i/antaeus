@@ -103,27 +103,58 @@ Happy hacking 😁!
 
 > InvoiceService
 
-- Added fetch's that will be used to get unpaidInvoices and set them as paid (AntaeusDal)
+- Added fetch that will be used to get pending invoices and set them as paid (AntaeusDal)
 
 > AntaeusDal
 
-- setInvoiceAsPaid() updates table invoices as paid 
-- fetchUnpaidInvoices() select all unpaid invoices from db 
+- Added function setInvoiceAsPaid() that updates invoices in db as paid
+- Added fetchUnpaidInvoices() which select all unpaid invoices from db
 
 > BillingService
 
-- monthlyBilling() function which iterates over unpaid invoices and charge them
-- simpleBilling() function used if required to charge only one specific invoice from a customer
+- Added monthlyBilling() function which iterates over unpaid invoices and charge them
+- Added simpleBilling() function used if required to charge only one specific invoice from a customer (AntaeusRest)
 
+> AntaeusRest
+
+- Added call to display all pending invoices in /rest/v1/pending
+- Added call to charge a pending invoice by id in /rest/v1/pending/charge/{:id}
+
+> InvoiceScheduler
+
+- Added scheduler that calls BillingService the 1st of each month, checks which invoices are pending and charges them
+- Library used : **KJob Scheduler** (https://github.com/justwrote/kjob)
 
 ### Commentary / Thoughts:
 
-.
+Process looked simple at first sight, but turned out to be not so easy as you needed to take care of some things during 
+the implementation of the solution, at least if you want to do it correctly and keep it both cleaner and not too complicated.
+
+While I was thinking of different solutions I did get a little overwhelmed as the amount of things you can add even if it is working as intended.
+To avoid starting the house from the roof (as we say in Spain) and make it more complicated than it was, I decided to stick to the main functionality,
+and then, if needed, I could always implement or refactor things to be more precise as I feel closer to finish it.
+
+My approach was the following: 
+
+First I did some recon over the application, checking what I had and what not, and where to implement things and keep it neat and tidy.
+Then, started creating the necessary functions inside BillingService, AntaeusDal & InvoiceService that will update the status of an Invoice from **PENDING** to **PAID**.
+Once that was finished, I added endpoints to test billing invoices and to make sure I was able to display all PENDING invoices
+When that looked fine to me, I started to figure out how to implement the scheduler to call monthlyBilling() the 1st of each month, as it requires the challenge.
+
+Finding a library was the main purpose, since I wanted the implementation to be less verbose and smaller, but because I am new
+to Kotlin I needed to do some research online, typing "Kotlin scheduler library" Krontab and Kjob were the first two to pop up, and after trying
+to implement **Krontab** (https://github.com/InsanusMokrassar/krontab) with no luck because it wasn't compatible with the gradle version
+(deprecated), ended up using **Kjob Library** (https://github.com/justwrote/kjob) which is a ligthweight job/cron scheduler which worked 
+pretty much as intended ! 😃
+
+(WIP)
+
 
 ### TODO:
 
-- Recurring task (scheduler)
-- REST modification to test billing 1 invoice
-- Exception handling
-- Find library for scheduler?
-- write thought process
+- ✅ Choose a library for the scheduler
+- ⬛ Recurring task / cron job
+- ✅ REST modification to test 1 billing
+- ⬛ Finish writing thought process and commentary
+- ⬛ Currency handling
+- ⬛ Exception handling
