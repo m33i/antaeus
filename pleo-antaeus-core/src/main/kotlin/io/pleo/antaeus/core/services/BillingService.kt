@@ -8,7 +8,6 @@ class BillingService(
     private val paymentProvider: PaymentProvider,
     private val invoiceService: InvoiceService
 ) {
-    // TODO - Add code e.g. here
 
     // Billing all unpaid invoices
     fun monthlyBilling() {
