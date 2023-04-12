@@ -63,7 +63,8 @@ fun main() {
     val billingService = BillingService(paymentProvider = paymentProvider, invoiceService = invoiceService)
 
     // Schedules monthlyBilling function
-    InvoiceScheduler.main { billingService.monthlyBilling() }
+    invoiceScheduler(billingService)
+    // InvoiceScheduler.main { billingService.monthlyBilling() }
 
     // Create REST web service
     AntaeusRest(
@@ -71,4 +72,8 @@ fun main() {
         customerService = customerService,
         billingService = billingService
     ).run()
+}
+
+fun invoiceScheduler(billingService: BillingService) {
+    InvoiceScheduler.main { billingService.monthlyBilling() }
 }

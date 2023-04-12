@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
 
 const val junitVersion = "5.6.0"
-const val krontab_version = "0.10.0"
+const val krontab_version = "0.5.0"
 //const val kjob_version = "0.2.0"
 
 /**

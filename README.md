@@ -117,17 +117,19 @@ Happy hacking 😁!
 
 > AntaeusRest
 
-- Added call to display all pending invoices in /rest/v1/pending
-- Added call to charge a pending invoice by id in /rest/v1/pending/charge/{:id}
+- Added endpoint all pending invoices in /rest/v1/pending
+- Added endpoint to charge a pending invoice by id in /rest/v1/pending/charge/{:id}
 
 > InvoiceScheduler
 
-- Added scheduler that calls BillingService the 1st of each month, checks which invoices are pending and charges them
-- Library used : **KJob Scheduler** (https://github.com/justwrote/kjob)
+- Added scheduler that calls BillingService the 1st of each month (coroutine), checks which invoices are pending and charges them
+- Library used : **Krontab** (https://github.com/InsanusMokrassar/krontab)
 
 ### Commentary / Thoughts:
 
-Process looked simple at first sight, but turned out to be not so easy as you needed to take care of some things during 
+This was my first time using Kotlin but really enjoyed it. I've been using Java on my current job and looked very similar so that was a plus when working with it.
+
+Process looked simple at first sight, but turned out to be not so easy as you needed to take care of some things during
 the implementation of the solution, at least if you want to do it correctly and keep it both cleaner and not too complicated.
 
 While I was thinking of different solutions I did get a little overwhelmed as the amount of things you can add even if it is working as intended.
@@ -136,25 +138,30 @@ and then, if needed, I could always implement or refactor things to be more prec
 
 My approach was the following: 
 
-First I did some recon over the application, checking what I had and what not, and where to implement things and keep it neat and tidy.
-Then, started creating the necessary functions inside BillingService, AntaeusDal & InvoiceService that will update the status of an Invoice from **PENDING** to **PAID**.
-Once that was finished, I added endpoints to test billing invoices and to make sure I was able to display all PENDING invoices
-When that looked fine to me, I started to figure out how to implement the scheduler to call monthlyBilling() the 1st of each month, as it requires the challenge.
+First I did some recon over the application, checking what I had and what not, and where to implement things to keep it neat and tidy.
+Then, started creating the necessary functions inside **BillingService**, **AntaeusDal** and **InvoiceService** that will update the status of an invoice from **PENDING** to **PAID**.
+Once that was finished, I added endpoints to test billing invoices and to make sure I was able to display all pending invoices.
 
-Finding a library was the main purpose, since I wanted the implementation to be less verbose and smaller, but because I am new
-to Kotlin I needed to do some research online, typing "Kotlin scheduler library" Krontab and Kjob were the first two to pop up, and after trying
-to implement **Krontab** (https://github.com/InsanusMokrassar/krontab) with no luck because it wasn't compatible with the gradle version
-(deprecated), ended up using **Kjob Library** (https://github.com/justwrote/kjob) which is a ligthweight job/cron scheduler which worked 
-pretty much as intended ! 😃
+When that looked fine to me, I started to figure out how to implement the scheduler to call my function **monthlyBilling()** the 1st of each month, as it requires the challenge.
 
-(WIP)
+Finding a library was the main purpose, since I wanted the implementation to be less verbose and simpler, but because I am new
+to Kotlin I needed to do some research, **Krontab** and **Kjob** were the first two to pop up when searching for "Kotlin scheduler library". 
 
+Tried to implement **Krontab** (https://github.com/InsanusMokrassar/krontab) with no luck when importing the necessary dependencies,
+so moved onto **Kjob** (https://github.com/justwrote/kjob) which I didn't like how it worked and tried to figured out how to fix the errors with **Krontab**.
+Turned out that I needed to import the dependencies to the coreLibs. As a downside I'd say that the newer version (0.10.0) wasn't compatible with the gradle version of this project,
+so I had to use 0.5.0 (0.6.0 - 0.10.0) was a no-go. 
+
+After all the troubleshooting everything was working fine and pretty much as intended ! 😃
+
+Next thing I wanted to do was to take care of exception handling and tests - (WIP)
 
 ### TODO:
 
 - ✅ Choose a library for the scheduler
-- ⬛ Recurring task / cron job
+- ✅ Recurring task / coroutine
 - ✅ REST modification to test 1 billing
-- ⬛ Finish writing thought process and commentary
-- ⬛ Currency handling
+- ⬛ Email notification when charged
+- 🔜 Finish writing thought process and commentary
+- ⬛ Currency handling?
 - ⬛ Exception handling
