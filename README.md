@@ -97,7 +97,7 @@ The code given is structured as follows. Feel free however to modify the structu
 
 Happy hacking 😁!
 
-## Challenge Documentation (WIP)
+## Challenge Documentation
 
 ### Modified files / Additions:
 
