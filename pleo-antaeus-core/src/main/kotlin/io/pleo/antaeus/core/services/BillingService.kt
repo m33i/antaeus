@@ -6,7 +6,8 @@ import io.pleo.antaeus.models.InvoiceStatus
 
 class BillingService(
     private val paymentProvider: PaymentProvider,
-    private val invoiceService: InvoiceService
+    private val invoiceService: InvoiceService,
+    private val mailerService: MailerService
 ) {
 
     // Billing all unpaid invoices
@@ -16,6 +17,10 @@ class BillingService(
         unpaid.forEach {
             if (paymentProvider.charge(it)) {
                 invoiceService.setAsPaid(it.id)
+
+                // Confirmation email
+                mailerService.setInvoiceDataToMail(it)
+                mailerService.sendConfirmationEmail(true)
             }
         }
     }
@@ -25,6 +30,10 @@ class BillingService(
 
         if (invoiceService.fetch(id).status == InvoiceStatus.PENDING) {
             invoiceService.setAsPaid(id)
+
+            // Confirmation email
+            mailerService.setInvoiceDataToMail(invoiceService.fetch(id))
+            mailerService.sendConfirmationEmail(true)
         }
 
         return invoiceService.fetch(id)

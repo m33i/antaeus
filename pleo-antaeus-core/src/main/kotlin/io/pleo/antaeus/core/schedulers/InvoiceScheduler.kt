@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 
 // In case it changes to another day
 // Testing: put the current day (-1) and you will se all invoices 'PAID'
+// Use endpoint localhost:7000/rest/v1/pending to check if still appear 'PENDING' invoices
 
 private const val NUM_MONTH_DAY = 0
 

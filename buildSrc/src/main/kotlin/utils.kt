@@ -4,8 +4,8 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
 
 const val junitVersion = "5.6.0"
-const val krontab_version = "0.5.0"
-//const val kjob_version = "0.2.0"
+const val krontab_version = "0.5.0" // LTS: 0.10.0
+const val simple_mail_ver = "1.3.2" // LTS: 1.4.0
 
 /**
  * Configures the current project as a Kotlin project by adding the Kotlin `stdlib` as a dependency.
@@ -27,11 +27,13 @@ fun Project.kotlinProject() {
         "testImplementation"("org.junit.jupiter:junit-jupiter-params:$junitVersion")
         "runtime"("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
+        // Simple Kotlin Mail Library
+        "implementation"("net.axay:simplekotlinmail-core:$simple_mail_ver")
+        "implementation"("net.axay:simplekotlinmail-client:$simple_mail_ver")
+        "implementation"("net.axay:simplekotlinmail-server:$simple_mail_ver")
+        "implementation"("net.axay:simplekotlinmail-html:$simple_mail_ver")
 
-        // Kjob Ligthweight scheduler
-        // "implementation"("it.justwrote:kjob-core:$kjob_version")
-        // "implementation" ("it.justwrote:kjob-mongo:$kjob_version") // for mongoDB persistence
-        // "implementation" ("it.justwrote:kjob-inmem:$kjob_version") // for in-memory 'persistence' (e.g. tests)
+        "implementation"("javax.mail:mail:1.4.5")
     }
 }
 

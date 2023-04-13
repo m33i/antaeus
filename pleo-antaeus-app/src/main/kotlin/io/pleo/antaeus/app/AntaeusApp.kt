@@ -12,10 +12,13 @@ import io.pleo.antaeus.core.schedulers.InvoiceScheduler
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.core.services.MailerService
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.data.CustomerTable
 import io.pleo.antaeus.data.InvoiceTable
 import io.pleo.antaeus.rest.AntaeusRest
+import net.axay.simplekotlinmail.delivery.MailerManager
+import net.axay.simplekotlinmail.delivery.mailerBuilder
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -60,11 +63,18 @@ fun main() {
     // Create core services
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
-    val billingService = BillingService(paymentProvider = paymentProvider, invoiceService = invoiceService)
+
+    // Setup default mail manager and call MailerService
+    setDefaultMailManager(MailerManager)
+    val mailerService = MailerService()
+
+    val billingService = BillingService(
+        paymentProvider = paymentProvider,
+        invoiceService = invoiceService,
+        mailerService = mailerService)
 
     // Schedules monthlyBilling function
     invoiceScheduler(billingService)
-    // InvoiceScheduler.main { billingService.monthlyBilling() }
 
     // Create REST web service
     AntaeusRest(
@@ -72,6 +82,11 @@ fun main() {
         customerService = customerService,
         billingService = billingService
     ).run()
+}
+
+fun setDefaultMailManager(mailManager: MailerManager) {
+    val mailer = mailerBuilder(host = "smtp.freesmtpservers.com", port = 25)
+    mailManager.defaultMailer = mailer
 }
 
 fun invoiceScheduler(billingService: BillingService) {

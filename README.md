@@ -125,6 +125,11 @@ Happy hacking 😁!
 - Added scheduler that calls BillingService the 1st of each month (coroutine), checks which invoices are pending and charges them
 - Library used : **Krontab** (https://github.com/InsanusMokrassar/krontab)
 
+> MailerService
+
+- Added mailer service which notifies whenever an invoices has been charged
+- Library used : **SimpleKotlinMail** (https://jakobkmar.github.io/SimpleKotlinMail/)
+
 ### Commentary / Thoughts:
 
 This was my first time using Kotlin but really enjoyed it. I've been using Java on my current job and looked very similar so that was a plus when working with it.
@@ -154,14 +159,26 @@ so I had to use 0.5.0 (0.6.0 - 0.10.0) was a no-go.
 
 After all the troubleshooting everything was working fine and pretty much as intended ! 😃
 
-Next thing I wanted to do was to take care of exception handling and tests - (WIP)
+Next thing I wanted to do was either handle exception/tests or make an improvement to make it more realistic in terms of a real application
+Decided to go for it and made it using another external library called **SimpleKotlinMail** (https://jakobkmar.github.io/SimpleKotlinMail/) which was fine for the purpose I intended to.
+Manage to make it work flawless using mostly the default setup and also was able to see it real-time thanks to a free SMTP server I found https://www.wpoven.com/tools/free-smtp-server-for-testing 
+
+Due to lack of time and that I took many weeks to finish it because of personal reasons (surgery) that I talked with Clemence, I decided to stop here and leave the currency and exceptions handling.
+The hole process took around 12-16h between a few time I had during Saturdays, I wish I could've finished it the first week it was assigned to me but the timing was very bad due to the surgery appointments.
+
+It was a really fun experience and totally different POV of programming since I've never worked with fintech technology which I'd love to! 😊
+
+### Other notes:
+
+Decided not to change the architecture of the application or move things to separate files because it will make it chaotic being the small as it is.
+It will be nice to do it though if the application was expected to grow.
 
 ### TODO:
 
 - ✅ Choose a library for the scheduler
 - ✅ Recurring task / coroutine
 - ✅ REST modification to test 1 billing
-- ⬛ Email notification when charged
-- 🔜 Finish writing thought process and commentary
+- ✅ Mocking an email notification service when charged (library?)
+- ✅ Finish writing thought process and commentary
 - ⬛ Currency handling?
-- ⬛ Exception handling
+- ⬛ Exception handling / Unit tests
