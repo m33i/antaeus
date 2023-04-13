@@ -96,3 +96,89 @@ The code given is structured as follows. Feel free however to modify the structu
 * [Sqlite3](https://sqlite.org/index.html) - Database storage engine
 
 Happy hacking 😁!
+
+## Challenge Documentation (WIP)
+
+### Modified files / Additions:
+
+> InvoiceService
+
+- Added fetch that will be used to get pending invoices and set them as paid (AntaeusDal)
+
+> AntaeusDal
+
+- Added function setInvoiceAsPaid() that updates invoices in db as paid
+- Added fetchUnpaidInvoices() which select all unpaid invoices from db
+
+> BillingService
+
+- Added monthlyBilling() function which iterates over unpaid invoices and charge them
+- Added simpleBilling() function used if required to charge only one specific invoice from a customer (AntaeusRest)
+
+> AntaeusRest
+
+- Added endpoint all pending invoices in /rest/v1/pending
+- Added endpoint to charge a pending invoice by id in /rest/v1/pending/charge/{:id}
+
+> InvoiceScheduler
+
+- Added scheduler that calls BillingService the 1st of each month (coroutine), checks which invoices are pending and charges them
+- Library used : **Krontab** (https://github.com/InsanusMokrassar/krontab)
+
+> MailerService
+
+- Added mailer service which notifies whenever an invoices has been charged
+- Library used : **SimpleKotlinMail** (https://jakobkmar.github.io/SimpleKotlinMail/)
+
+### Commentary / Thoughts:
+
+This was my first time using Kotlin but really enjoyed it. I've been using Java on my current job and looked very similar so that was a plus when working with it.
+
+Process looked simple at first sight, but turned out to be not so easy as you needed to take care of some things during
+the implementation of the solution, at least if you want to do it correctly and keep it both cleaner and not too complicated.
+
+While I was thinking of different solutions I did get a little overwhelmed as the amount of things you can add even if it is working as intended.
+To avoid starting the house from the roof (as we say in Spain) and make it more complicated than it was, I decided to stick to the main functionality,
+and then, if needed, I could always implement or refactor things to be more precise as I feel closer to finish it.
+
+My approach was the following: 
+
+First I did some recon over the application, checking what I had and what not, and where to implement things to keep it neat and tidy.
+Then, started creating the necessary functions inside **BillingService**, **AntaeusDal** and **InvoiceService** that will update the status of an invoice from **PENDING** to **PAID**.
+Once that was finished, I added endpoints to test billing invoices and to make sure I was able to display all pending invoices.
+
+When that looked fine to me, I started to figure out how to implement the scheduler to call my function **monthlyBilling()** the 1st of each month, as it requires the challenge.
+
+Finding a library was the main purpose, since I wanted the implementation to be less verbose and simpler, but because I am new
+to Kotlin I needed to do some research, **Krontab** and **Kjob** were the first two to pop up when searching for "Kotlin scheduler library". 
+
+Tried to implement **Krontab** (https://github.com/InsanusMokrassar/krontab) with no luck when importing the necessary dependencies,
+so moved onto **Kjob** (https://github.com/justwrote/kjob) which I didn't like how it worked and tried to figured out how to fix the errors with **Krontab**.
+Turned out that I needed to import the dependencies to the coreLibs. As a downside I'd say that the newer version (0.10.0) wasn't compatible with the gradle version of this project,
+so I had to use 0.5.0 (0.6.0 - 0.10.0) was a no-go. 
+
+After all the troubleshooting everything was working fine and pretty much as intended ! 😃
+
+Next thing I wanted to do was either handle exception/tests or make an improvement to make it more realistic in terms of a real application
+Decided to go for it and made it using another external library called **SimpleKotlinMail** (https://jakobkmar.github.io/SimpleKotlinMail/) which was fine for the purpose I intended to.
+Manage to make it work flawless using mostly the default setup and also was able to see it real-time thanks to a free SMTP server I found https://www.wpoven.com/tools/free-smtp-server-for-testing 
+
+Due to lack of time and that I took many weeks to finish it because of personal reasons (surgery) that I talked with Clemence, I decided to stop here and leave the currency and exceptions handling.
+The hole process took around 12-16h between a few time I had during Saturdays, I wish I could've finished it the first week it was assigned to me but the timing was very bad due to the surgery appointments.
+
+It was a really fun experience and totally different POV of programming since I've never worked with fintech technology which I'd love to! 😊
+
+### Other notes:
+
+Decided not to change the architecture of the application or move things to separate files because it will make it chaotic being the small as it is.
+It will be nice to do it though if the application was expected to grow.
+
+### TODO:
+
+- ✅ Choose a library for the scheduler
+- ✅ Recurring task / coroutine
+- ✅ REST modification to test 1 billing
+- ✅ Mocking an email notification service when charged (library?)
+- ✅ Finish writing thought process and commentary
+- ⬛ Currency handling?
+- ⬛ Exception handling / Unit tests
